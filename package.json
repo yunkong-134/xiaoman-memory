@@ -1,0 +1,27 @@
+{
+  "name": "xiaoman-memory",
+  "version": "0.1.0",
+  "description": "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事，写库留给人。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "memory",
+    "notes"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "assets",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "MIT"
+}
