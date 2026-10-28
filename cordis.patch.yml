@@ -1,0 +1,7 @@
+# xiaoman-memory — DSH bundle patch
+#
+# insert 的 id 要和 lib/index.js 里的 `export const name` 一致（xiaoman-memory），
+# name 是包名。两个不一样时插件加载不起来——2026-10-26 在 xiaoman 上踩过一次。
+- insert:
+    - id: xiaoman-memory
+      name: xiaoman-memory
