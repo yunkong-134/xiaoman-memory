@@ -23,5 +23,7 @@
       "patch": "./cordis.patch.yml"
     }
   },
+  "repository": "github:yunkong-134/xiaoman-memory",
+  "bugs": "https://github.com/yunkong-134/xiaoman-memory/issues",
   "license": "MIT"
 }
