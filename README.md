@@ -13,13 +13,19 @@
 
 ## 装
 
-放进 profile 的 node_modules，或者 npm 装，再把包名写进 profile 的 `package.json`：
+一行：
+
+```
+dsh plugin --profile web add https://github.com/yunkong-134/xiaoman-memory/releases/download/v0.1.0/xiaoman-memory-0.1.0.tgz
+```
+
+装完重启 DSH。第一次启动会在 `~/.dsh/memory` 铺一份空模板。
+
+也可以把包放进 profile 的 node_modules，再把包名写进 profile 的 `package.json`：
 
 ```json
 "dsh": { "profile": { "bundles": ["xiaoman-memory"] } }
 ```
-
-重启 DSH。第一次启动会在 `~/.dsh/memory` 铺一份空模板。
 
 想换地方：设环境变量 `DSH_MEMORY_DIR`，指到哪就写哪。
 
