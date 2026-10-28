@@ -16,7 +16,7 @@
 一行：
 
 ```
-dsh plugin --profile web add https://github.com/yunkong-134/xiaoman-memory/releases/download/v0.1.0/xiaoman-memory-0.1.0.tgz
+dsh plugin --profile web add https://github.com/yunkong-134/xiaoman-memory/releases/download/v0.1.1/xiaoman-memory-0.1.1.tgz
 ```
 
 装完重启 DSH。第一次启动会在 `~/.dsh/memory` 铺一份空模板。
