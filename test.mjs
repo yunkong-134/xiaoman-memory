@@ -1,104 +1,77 @@
-// 本地测：不起 DSH，拿假会话把插件跑一遍。
-// 用法：node test.mjs empty   或   node test.mjs hit
-import { mkdtempSync, writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs'
-import { join } from 'node:path'
+// 冒烟测试：不起 DSH，拿假上下文把插件跑一遍。
+// 用法：node test.mjs
+// 覆盖：装完铺模板、工具挂上、体检的源对账、待补理解、memory_archive 真写一行。
+import { mkdtempSync, writeFileSync, readFileSync, mkdirSync, rmSync, existsSync } from 'node:fs'
 import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 
-const mode = process.argv[2] || 'empty'
-const dir = join(process.cwd(), '.test', 'memory-' + mode + '-' + process.pid)
-process.env.DSH_MEMORY_DIR = dir
+const 临时 = mkdtempSync(join(tmpdir(), 'xmm-test-'))
+process.env.DSH_MEMORY_DIR = 临时
 
-const { 备好目录, 文件 } = await import('./lib/paths.js')
-const 回想 = await import('./lib/回想.js')
-const 长 = await import('./lib/长元素.js')
 const 插件 = await import('./lib/index.js')
+const P = await import('./lib/paths.js')
+P.备好目录()
 
-let 失败 = 0
-const ok = (名, 过, 补 = '') => {
-  if (过) console.log('ok   ' + 名)
-  else { 失败++; console.log('FAIL ' + 名 + (补 ? '  ← ' + 补 : '')) }
+const 失败 = []
+function 检查(名, 条件, 详情 = '') {
+  if (条件) console.log('  ok  ' + 名)
+  else { console.log('  ×   ' + 名 + (详情 ? '  ' + 详情 : '')); 失败.push(名) }
 }
 
-function 假会话(id, 话) {
-  const 盒 = { 取: null }
-  const agent = {
-    session: {
-      id,
-      snapshotEvents: () => [{ type: 'user/message', payload: { content: 话, source: { kind: 'user' } } }],
-    },
-    ctx: {
-      systemPrompt: {
-        context: (o) => { 盒.取 = o.text },
-      },
-    },
-  }
-  return { agent, 读: () => (盒.取 ? 盒.取() : '') }
-}
+console.log('一、装完铺出来的东西')
+for (const [名, 路径] of [
+  ['事件库.md', P.文件.库],
+  ['元素表.md', P.文件.表],
+  ['第一条.md', P.文件.第一条],
+  ['全忆/说明.md', join(P.文件.全忆目录, '说明.md')],
+]) 检查(名, existsSync(路径))
 
-备好目录()
-ok('模板铺好', existsSync(文件.库) && existsSync(文件.表) && existsSync(文件.别名))
-ok('库是空的', (readFileSync(文件.库, 'utf8').match(/^### /gm) || []).length === 0)
-ok('空库回想为空手', 回想.联想('备份脚本坏了怎么修').length === 0)
+console.log('二、工具挂上了')
+const 工具 = {}
+const ctx = { tools: { register: (d) => { 工具[d.name] = d; return () => {} } }, agents: { roots: () => [], list: () => [] }, on: () => {} }
+插件.apply(ctx)
+for (const 名 of ['memory_check', 'memory_explain', 'memory_archive']) 检查(名, Boolean(工具[名]))
 
-if (mode === 'empty') {
-  const a = 假会话('s1', '备份脚本坏了怎么修')
-  插件.apply({ agents: { roots: () => [a.agent] }, systemPrompt: {} })
-  const 注入 = a.读()
-  ok('空库会提一句', 注入.includes('还是空的'), 注入)
-  ok('空库不乱认旧事', !注入.includes('相关旧事'), 注入)
-  console.log('\n注入文本：\n' + 注入)
-}
+console.log('三、体检')
+writeFileSync(P.文件.库, [
+  '### E001 2026-11-02 备份断了',
+  '〔事〕备份只拷了顶层就断了。',
+  '〔判〕2026-11-02 任务被收走。',
+  '〔源〕全忆/2026-11-02.md 09:10:00',
+  '〔元〕备份',
+  '〔情〕-1',
+  '',
+  '### E002 2026-11-02 源指错的那条',
+  '〔事〕这条的源指到不存在的日子。',
+  '〔判〕2026-11-02 测试用。',
+  '〔源〕全忆/2026-10-01.md 08:00:00',
+  '〔元〕崩溃',
+  '〔情〕0',
+  '',
+].join('\n'), 'utf8')
+mkdirSync(P.文件.全忆目录, { recursive: true })
+writeFileSync(join(P.文件.全忆目录, '2026-11-02.md'), '# 2026-11-02\n\n09:10:00 他  备份跑完没\n', 'utf8')
+writeFileSync(P.文件.表, [
+  '    〔元〕备份｜器物｜别名：存档｜条数 1｜',
+  '    〔元〕崩溃｜抽象｜别名：报错｜条数 1｜',
+  '',
+].join('\n'), 'utf8')
 
-if (mode === 'hit') {
-  writeFileSync(文件.表, [
-    '〔元〕备份｜器物｜别名：备份脚本、backup｜整份拷贝',
-    '〔元〕脚本｜器物｜别名：.ps1｜写来干活的',
-    '〔元〕随身包｜器物｜别名：便携包｜拷了就能走的那份',
-    '',
-  ].join('\n'), 'utf8')
-  writeFileSync(文件.库, [
-    '# 事件库',
-    '',
-    '### 10-28 备份脚本跑到一半就断',
-    '〔事〕23:50 那次备份只拷了工作区顶层，剩下的没跑完。',
-    '〔判〕2026-10-28 定时任务被宿主收走了，脚本本身没坏。',
-    '〔源〕他 23:55 说的；备份.ps1 第 12 行',
-    '〔元〕备份、脚本',
-    '',
-    '### 10-27 随身包在真盘上跑通',
-    '〔事〕拷到 D 盘，双击装小满，库一条没少。',
-    '〔判〕2026-10-27 路径改写那步是关键。',
-    '〔源〕他 13:40 说的话',
-    '〔元〕随身包',
-    '',
-    '### 10-26 视频做到六十秒',
-    '〔事〕草样四跑满六十秒，缺音轨。',
-    '〔判〕2026-10-26 节奏表能控住时长。',
-    '〔源〕视频草样4.mp4',
-    '〔元〕视频',
-    '',
-  ].join('\n'), 'utf8')
+const c = await 工具.memory_check.execute({})
+const 报 = c.行.join('\n')
+检查('源对账能报出缺的那天', 报.includes('那天的文件不在'))
+检查('待补理解能列出没写的词', 报.includes('待补理解') || 报.includes('理解库里还没写'))
+检查('引用统计有输出', 报.includes('被别的条目提过'))
 
-  const 中 = 回想.联想('备份脚本又坏了怎么办')
-  ok('按元素找得到旧事', 中.length > 0 && 中[0].title.includes('备份'), JSON.stringify(中))
-  ok('两跳最多两条', 中.length <= 2, JSON.stringify(中))
+console.log('四、memory_archive 真写一行')
+await 工具.memory_archive.execute({ 话: '这个包跑得动吗', 谁: '他', 日: '2026-11-02', 时: '10:20:30' })
+const 全忆 = readFileSync(join(P.文件.全忆目录, '2026-11-02.md'), 'utf8')
+检查('原话进了当天文件', 全忆.includes('10:20:30 他  这个包跑得动吗'))
 
-  const a = 假会话('s2', '备份脚本又坏了怎么办')
-  插件.apply({ agents: { roots: () => [a.agent] }, systemPrompt: {} })
-  const 注入 = a.读()
-  ok('注入里有旧事', 注入.includes('相关旧事'), 注入)
-  ok('注入里没有判断', !注入.includes('定时任务被宿主收走了'), 注入)
+console.log('五、memory_explain 能解释')
+const e = await 工具.memory_explain.execute({ 问: '备份跑完了吗', 期望: 'E001' })
+检查('有判定', (e.行 || []).length > 0)
 
-  const 候选 = 长.长元素()
-  ok('长元素写了候选文件', existsSync(文件.候选), JSON.stringify(候选))
-
-  rmSync(文件.库)
-  const b = 假会话('s3', '备份还在吗')
-  插件.apply({ agents: { roots: () => [b.agent] }, systemPrompt: {} })
-  const 注入2 = b.读()
-  ok('库不见了会喊', 注入2.includes('不见了'), 注入2)
-  console.log('\n注入文本：\n' + 注入)
-}
-
-console.log(失败 ? '\n失败 ' + 失败 + ' 项' : '\n全过')
-process.exit(失败 ? 1 : 0)
+rmSync(临时, { recursive: true, force: true })
+if (失败.length) { console.log('\n挂了 ' + 失败.length + ' 项：' + 失败.join('、')); process.exit(1) }
+console.log('\n全过。')
