@@ -1,36 +1,36 @@
 {
-    "name":  "xiaoman-memory",
-    "version":  "3.0.0",
-    "description":  "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事；装完有模板、写坏会报错、想不起能查。",
-    "keywords":  [
-                     "dsh",
-                     "dsh-plugin",
-                     "deepseek-harness",
-                     "memory",
-                     "notes"
-                 ],
-    "type":  "module",
-    "main":  "lib/index.js",
-    "files":  [
-                  "lib",
-                  "assets",
-                  "cordis.patch.yml",
-                  "README.md",
-                  "LICENSE"
-              ],
-    "dsh":  {
-                "bundle":  {
-                               "patch":  "./cordis.patch.yml"
-                           }
-            },
-    "repository":  "github:yunkong-134/xiaoman-memory",
-    "bugs":  "https://github.com/yunkong-134/xiaoman-memory/issues",
-    "license":  "MIT",
-    "engines":  {
-                    "node":  "\u003e=22",
-                    "dsh":  "\u003e=0.2.1-rc.5 \u003c0.2.2"
-                },
-    "scripts":  {
-                    "test":  "node test.mjs"
-                }
+  "name": "xiaoman-memory",
+  "version": "3.0.1",
+  "description": "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事；装完有模板、写坏会报错、想不起能查。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "memory",
+    "notes"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "assets",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "repository": "github:yunkong-134/xiaoman-memory",
+  "bugs": "https://github.com/yunkong-134/xiaoman-memory/issues",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.5 <0.2.2"
+  },
+  "scripts": {
+    "test": "node test.mjs"
+  }
 }

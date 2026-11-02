@@ -66,7 +66,7 @@ const 报 = c.行.join('\n')
 console.log('四、memory_archive 真写一行')
 await 工具.memory_archive.execute({ 话: '这个包跑得动吗', 谁: '他', 日: '2026-11-02', 时: '10:20:30' })
 const 全忆 = readFileSync(join(P.文件.全忆目录, '2026-11-02.md'), 'utf8')
-检查('原话进了当天文件', 全忆.includes('10:20:30 他  这个包跑得动吗'))
+检查('原话进了当天文件', 全忆.includes('### 10:20:30 他') && 全忆.includes('这个包跑得动吗'))
 
 console.log('五、memory_explain 能解释')
 const e = await 工具.memory_explain.execute({ 问: '备份跑完了吗', 期望: 'E001' })
