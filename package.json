@@ -1,7 +1,7 @@
 {
   "name": "xiaoman-memory",
-  "version": "0.1.0",
-  "description": "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事，写库留给人。",
+  "version": "3.0.0",
+  "description": "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事；装完有模板、写坏会报错、想不起能查。",
   "keywords": [
     "dsh",
     "dsh-plugin",
@@ -25,5 +25,9 @@
   },
   "repository": "github:yunkong-134/xiaoman-memory",
   "bugs": "https://github.com/yunkong-134/xiaoman-memory/issues",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.1-rc.5 <0.2.2"
+  }
 }
