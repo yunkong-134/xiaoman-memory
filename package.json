@@ -1,6 +1,6 @@
 {
   "name": "xiaoman-memory",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "纯文本、不向量的 DSH 记忆插件：按元素联想，每轮只交两条旧事；装完有模板、写坏会报错、想不起能查。",
   "keywords": [
     "dsh",
